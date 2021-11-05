@@ -1,6 +1,10 @@
 package game;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import org.apache.commons.lang3.math.NumberUtils;
 
 public class Game {
@@ -11,25 +15,37 @@ public class Game {
 	String key;
 	String hMAC;
 
-	public static String[] createChoiseList(int choiseNum) {
+	public static String[] checkAgrs(String[] args) {
 
-		String[] choisesNames = new String[] { "Sissors", "Lizzard", "Paper", "Spok", "Rock", "Fire", "Air" };
-		if (choiseNum == 3) {
-			String choises[] = new String[] { choisesNames[0], choisesNames[2], choisesNames[4] };
-			return choises;
+		while (!(check(args) & checkDistinct(args))) {
+			System.out.println("Number of choises must be odd and >=3 and unique ");
+			args = toStringArr(enterFromConsol());
 		}
 
-		String choises[] = new String[choiseNum];
+		return args;
+	}
 
-		for (int i = 0; i < choises.length; i++) {
-			if (i < 7) {
-				choises[i] = choisesNames[i];
-			} else {
-				choises[i] = "var" + (i + 1);
-			}
+	public static boolean check(String[] args) {
+		if (args.length % 2 == 0 | args.length < 3) {
+			return false;
 		}
+		return true;
+	}
 
-		return choises;
+	public static boolean checkDistinct(String[] args) {
+
+		Collection<String> list = Arrays.asList(args);
+		List<Object> distinctElements = list.stream().distinct().collect(Collectors.toList());
+		if (distinctElements.size() == args.length) {
+			return true;
+		}
+		return false;
+	}
+
+	public static String[] toStringArr(String str) {
+		String[] stArr = null;
+		stArr = str.split(" ");
+		return stArr;
 	}
 
 	public static String enterFromConsol() {
@@ -51,17 +67,6 @@ public class Game {
 		}
 
 		num = Integer.parseInt(val);
-		return num;
-	}
-
-	public static int checkGameNum() {
-		int num = enterNum();
-		while (num < 3 || num % 2 == 0) {
-			System.out.println("Choises must be >= 3 and odd!");
-			num = enterNum();
-		}
-		;
-
 		return num;
 	}
 
@@ -104,26 +109,24 @@ public class Game {
 			Table.printTab(a);
 			gameplay(a, hMAC, compCh);
 		} else {
-			System.out.println("Your choise " + a[f-1] + " Comp choise " + a[compCh-1]);
-			if (Rules.whoWins(a, f, compCh)==1){
+			System.out.println("Your choise " + a[f - 1] + " Comp choise " + a[compCh - 1]);
+			if (Rules.whoWins(a, f, compCh) == 1) {
 				System.out.println("You win!");
-			} else if(Rules.whoWins(a, f, compCh)== -1) {
+			} else if (Rules.whoWins(a, f, compCh) == -1) {
 				System.out.println("You Lose!");
-			}else if (Rules.whoWins(a, f, compCh)== 0) {
+			} else if (Rules.whoWins(a, f, compCh) == 0) {
 				System.out.println("Draw!");
 			}
-			
+
 		}
 	}
 
-	public static void startGame() throws Exception {
-
-		System.out.println("Enter number of choises. Choises must be >= 3 and odd ");
+	public static void startGame(String[] arg) throws Exception {
 
 		Game game = new Game();
-		game.choiseNum = checkGameNum();
+		game.choiseNum = arg.length;
 		game.key = Crypto.getKey();
-		game.choises = createChoiseList(game.choiseNum);
+		game.choises = arg;
 		game.compStep = Crypto.getCompStep(game.choiseNum);
 		game.hMAC = Crypto.hMAC(game.key, game.choises[game.compStep - 1]);
 		gameplay(game.choises, game.hMAC, game.compStep);
@@ -131,7 +134,8 @@ public class Game {
 	}
 
 	public static void main(String[] args) throws Exception {
-		startGame();
+		String[] arg = checkAgrs(args);
+		startGame(arg);
 	}
 
 }
