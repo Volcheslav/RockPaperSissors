@@ -11,13 +11,6 @@ import javax.xml.bind.DatatypeConverter;
 
 
 public class Crypto {
-
-	public static void main(String[] args) throws NoSuchAlgorithmException, Exception  {
-		
-		String key = getKey();
-		System.out.println(hMAC(key, "rock"));
-		System.out.println(key);
-	}
 	
 	public static String getKey () throws NoSuchAlgorithmException {
 		KeyGenerator keyGen = KeyGenerator.getInstance("AES");
