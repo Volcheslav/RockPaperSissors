@@ -56,20 +56,7 @@ public class Game {
 		return scr.nextLine();
 
 	}
-
-	public static int enterNum() {
-		int num;
-		String val = enterFromConsol();
-
-		while (!NumberUtils.isDigits(val)) {
-			System.out.println("Print number!");
-			val = enterFromConsol();
-		}
-
-		num = Integer.parseInt(val);
-		return num;
-	}
-
+	
 	public static String checkChoise() {
 
 		String val = enterFromConsol();
